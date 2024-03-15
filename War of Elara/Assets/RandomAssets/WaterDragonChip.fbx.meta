@@ -3,7 +3,37 @@ guid: 7418c0b9b38c95949904d7729ef9dd4e
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: 9f4f90af56f2331458feb35825f97ac8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SVGMat.001
+    second: {fileID: 2100000, guid: 94c3056ea84b0f04ba4b0842b239962d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SVGMat.003
+    second: {fileID: 2100000, guid: 2e6060ab812c2234592f461dd81c332e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SVGMat.005
+    second: {fileID: 2100000, guid: 44ee67126c1b5e74cb9b00389647272a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: drakonqq-removebg-preview
+    second: {fileID: 2100000, guid: cacc6712ada487043bf5897c5d143b21, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: drakonqq-removebg-preview.002
+    second: {fileID: 2100000, guid: 74425490c8a64c44f861d681fdd878bd, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

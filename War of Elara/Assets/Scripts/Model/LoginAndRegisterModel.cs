@@ -65,7 +65,7 @@ public class LoginAndRegisterModel : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            Debug.Log("Services initialization error" + ex);
         }
     }
 
