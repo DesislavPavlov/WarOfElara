@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,20 +13,25 @@ public class DeckBuilder : MonoBehaviour
     private Deck currentDeck;
 
     [SerializeField] GetCards getCards;
+    [SerializeField] PlayerDataModel playerDataModel;
     [SerializeField] GameObject cardInListPrefab;
     [SerializeField] GameObject cardInDeckPrefab;
     [SerializeField] GameObject viewScrollContent;
     [SerializeField] GameObject deckContainer;
     [SerializeField] AudioClip addCardSound;
     [SerializeField] AudioClip removeCardSound;
+    [SerializeField] GameObject nameForm;
+    [SerializeField] TextMeshProUGUI nameText;
 
-    
+
 
     void Start()
     {
         this.animator = GetComponent<Animator>();
         this.audioSource = GetComponent<AudioSource>();
         this.basicCards = new List<Card>();
+
+        this.nameForm.SetActive(false);
     }
 
     public void OpenNewDeckBuilder()
@@ -98,5 +104,23 @@ public class DeckBuilder : MonoBehaviour
             audioSource.clip = removeCardSound;
             audioSource.Play();
         }
+    }
+
+    public void OpenRenameDeckForm()
+    {
+        nameForm.SetActive(true);
+    }
+
+    public void SubmitRenameDeck()
+    {
+        string newName = this.nameForm.GetComponentInChildren<TMP_InputField>().text;
+        this.currentDeck.SetName(newName);
+        this.nameText.text = newName;
+        this.nameForm.SetActive(false);
+    }
+        
+    public void SaveDeck()
+    {
+        
     }
 }

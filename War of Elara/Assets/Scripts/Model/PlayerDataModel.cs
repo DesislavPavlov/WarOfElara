@@ -14,17 +14,17 @@ public class PlayerDataModel : MonoBehaviour
 {
     private List<Deck> decks;
 
-    public List<Deck> Decks
-    {
-        get
-        {
-            return decks;
-        }
-        private set
-        {
-            this.decks = value;
-        }
-    }
+    //public List<Deck> Decks
+    //{
+    //    get
+    //    {
+    //        return decks;
+    //    }
+    //    private set
+    //    {
+    //        this.decks = value;
+    //    }
+    //}
 
     async void Awake()
     {
@@ -38,16 +38,7 @@ public class PlayerDataModel : MonoBehaviour
         }
 
         if (!AuthenticationService.Instance.IsSignedIn)
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
-        //this.Decks = await GetDecks();
-        //print(string.Join(' ', this.Decks));
-    }
-
-
-    void Update()
-    {
-        
+            await AuthenticationService.Instance.SignInWithUsernamePasswordAsync("admin", "Admin_420");
     }
 
     public async Task<List<Deck>> GetDecks()
@@ -72,5 +63,21 @@ public class PlayerDataModel : MonoBehaviour
             print("no decks");
             return (List<Deck>)emptyDecks["decks"];
         }
+    }
+
+    public async void SaveNewDeck(Deck deck)
+    {
+        this.decks.Add(deck);
+
+        var playerDecks = new Dictionary<string, object>{
+          {"decks", this.decks}
+        };
+        await CloudSaveService.Instance.Data.Player.SaveAsync(playerDecks);
+        Debug.Log($"Saved data {string.Join(',', playerDecks)}");
+    }
+
+    public async void SaveExistingDeck(Deck deck)
+    {
+
     }
 }
