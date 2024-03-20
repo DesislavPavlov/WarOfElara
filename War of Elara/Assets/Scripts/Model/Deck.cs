@@ -9,8 +9,14 @@ public class Deck
 
     public string Name
     {
-        get { return name; }
-        private set { this.name = value; }
+        get { return this.name; }
+        set { this.name = value; }
+    }
+
+    public List<Card> Cards
+    {
+        get { return this.cards; }
+        set { this.cards = value; }
     }
 
     public Deck()
@@ -40,5 +46,15 @@ public class Deck
     public bool RemoveCard(Card card)
     {
         return this.cards.Remove(card);
+    }
+
+    public List<Card> GetCards()
+    {
+        return this.cards;
+    }
+
+    public override string ToString()
+    {
+        return $"Deck name: {this.Name}; Cards: {string.Join(' ', this.cards)}";
     }
 }

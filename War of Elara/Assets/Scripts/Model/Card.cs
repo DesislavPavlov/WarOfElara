@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ public class Card
     private int id;
     private string name;
     private string description;
-    private Sprite image;
+    private string base64image;
 
     public int Id
     {
@@ -27,17 +28,17 @@ public class Card
         set { this.description = value; }
     }
 
-    public Sprite Image
+    public string Base64Image
     {
-        get { return this.image; }
-        set { this.image = value; }
+        get { return this.base64image; }
+        set { this.base64image = value; }
     }
 
-    public Card(int id, string name, string description, Sprite image)
+    public Card(int id, string name, string description, string base64image)
     {
         this.Id = id;
         this.Name = name;
         this.Description = description;
-        this.Image = image;
+        this.Base64Image = base64image;
     }
 }

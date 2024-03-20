@@ -39,45 +39,62 @@ public class PlayerDataModel : MonoBehaviour
 
         if (!AuthenticationService.Instance.IsSignedIn)
             await AuthenticationService.Instance.SignInWithUsernamePasswordAsync("admin", "Admin_420");
+
+        this.decks = await LoadDecks();
     }
 
+    private async void OnDestroy()
+    {
+        await SaveDecks();
+    }
+
+
     public async Task<List<Deck>> GetDecks()
+    {
+        if (this.decks == null)
+            await LoadDecks();
+
+        return this.decks;
+    }
+
+    public List<string> GetDeckNames()
+    {
+        List<string> names = new List<string>();
+        foreach (Deck deck in this.decks)
+        {
+            names.Add(deck.Name);
+        }
+
+        return names;
+    }
+
+    public async Task<List<Deck>> LoadDecks()
     {
         var playerDecks = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "decks" });
 
         if (playerDecks.TryGetValue("decks", out var decks))
         {
-            List<Deck> listOfDecks = decks.Value.GetAs<List<Deck>>();
-            print("has decks");
+            string json = decks.Value.GetAsString();
+            List<Deck> listOfDecks = JsonConvert.DeserializeObject<List<Deck>>(json);
             return listOfDecks;
         }
         else
         {
-            var emptyDecks = new Dictionary<string, object>
-            {
-                {"decks", new List<Deck>() }
-            };
-
-            await CloudSaveService.Instance.Data.Player.SaveAsync(emptyDecks);
-
-            print("no decks");
-            return (List<Deck>)emptyDecks["decks"];
+            return new List<Deck>();
         }
     }
 
-    public async void SaveNewDeck(Deck deck)
+    public async Task SaveDecks()
     {
-        this.decks.Add(deck);
+        string dataStringified = JsonConvert.SerializeObject(this.decks, Formatting.Indented, new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        });
 
         var playerDecks = new Dictionary<string, object>{
-          {"decks", this.decks}
+          {"decks", dataStringified}
         };
+
         await CloudSaveService.Instance.Data.Player.SaveAsync(playerDecks);
-        Debug.Log($"Saved data {string.Join(',', playerDecks)}");
-    }
-
-    public async void SaveExistingDeck(Deck deck)
-    {
-
     }
 }

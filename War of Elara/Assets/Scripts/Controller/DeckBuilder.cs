@@ -12,7 +12,6 @@ public class DeckBuilder : MonoBehaviour
     private List<Card> basicCards;
     private Deck currentDeck;
 
-    [SerializeField] GetCards getCards;
     [SerializeField] PlayerDataModel playerDataModel;
     [SerializeField] GameObject cardInListPrefab;
     [SerializeField] GameObject cardInDeckPrefab;
@@ -32,21 +31,37 @@ public class DeckBuilder : MonoBehaviour
         this.basicCards = new List<Card>();
 
         this.nameForm.SetActive(false);
+
+        CreateCardsForDeckbuilding(GetCards.instance.GetAllBasicCards());
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            if (GetComponent<Canvas>().isActiveAndEnabled)
+                CloseDeckBuilder();
+    }
+
+    // Visualisation
     public void OpenNewDeckBuilder()
     {
         OpenDeckBuilder(new Deck());
     }
-
     public void OpenDeckBuilder(Deck deck)
     {
         this.animator.SetTrigger("Open");
-        CreateObjectsForEachCard(getCards.GetAllBasicCards());
         this.currentDeck = deck;
-    }
 
-    private void CreateObjectsForEachCard(List<string>[] data)
+        this.nameText.text = deck.Name;
+
+        DestroyPreviousCards();
+        CreateCardsInDeckOnDeckBuilderOpen();
+    }
+    public void CloseDeckBuilder()
+    {
+        this.animator.SetTrigger("Close");
+    }
+    private void CreateCardsForDeckbuilding(List<string>[] data)
     {
         // Create Card objects
         for (int row = 0; row < data[0].Count; row++)
@@ -55,9 +70,9 @@ public class DeckBuilder : MonoBehaviour
             int id = int.Parse(data[0][row]);
             string name = data[1][row];
             string description = data[2][row];
-            Sprite image = ConvertBase64ToSprite(data[3][row]);
+            string base64image = data[3][row];
 
-            Card newCard = new Card(id, name, description, image);
+            Card newCard = new Card(id, name, description, base64image);
             this.basicCards.Add(newCard);
         }
 
@@ -72,30 +87,38 @@ public class DeckBuilder : MonoBehaviour
             cardInList.GetComponent<Button>().onClick.AddListener(() => { AddCard(card); });
         }
     }
-
-    private Sprite ConvertBase64ToSprite(string base64)
+    private void CreateCardsInDeckOnDeckBuilderOpen()
     {
-        byte[] imageBytes = Convert.FromBase64String(base64);
-        Texture2D tex = new Texture2D(2, 2);
-        tex.LoadImage(imageBytes);
-        Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
-
-        return sprite;
+        foreach (Card card in this.currentDeck.GetCards())
+        {
+            CreateCardInDeckObject(card);
+        }
     }
 
+    // Card Control
     public void AddCard(Card card)
     {
         if(this.currentDeck.AddCard(card))
         {
-            GameObject cardInDeck = Instantiate(cardInDeckPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            cardInDeck.transform.SetParent(deckContainer.transform, false);
-            cardInDeck.GetComponent<Image>().sprite = card.Image;
-            cardInDeck.GetComponent<Button>().onClick.AddListener(() => { RemoveCard(card, cardInDeck); });
+            CreateCardInDeckObject(card);
             audioSource.clip = addCardSound;
             audioSource.Play();
         }
     }
-
+    private void CreateCardInDeckObject(Card card)
+    {
+        GameObject cardInDeck = Instantiate(cardInDeckPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        cardInDeck.transform.SetParent(deckContainer.transform, false);
+        cardInDeck.GetComponent<Image>().sprite = Base64ToImage.ConvertBase64ToSprite(card.Base64Image);
+        cardInDeck.GetComponent<Button>().onClick.AddListener(() => { RemoveCard(card, cardInDeck); });
+    }
+    private void DestroyPreviousCards()
+    {
+        foreach (Transform child in deckContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
     public void RemoveCard(Card card, GameObject caller)
     {
         if(this.currentDeck.RemoveCard(card))
@@ -106,21 +129,35 @@ public class DeckBuilder : MonoBehaviour
         }
     }
 
+    // Renaming Deck
     public void OpenRenameDeckForm()
     {
         nameForm.SetActive(true);
     }
-
     public void SubmitRenameDeck()
     {
         string newName = this.nameForm.GetComponentInChildren<TMP_InputField>().text;
+ 
+        if (playerDataModel.GetDeckNames().Contains(newName))
+            return;
+
         this.currentDeck.SetName(newName);
         this.nameText.text = newName;
         this.nameForm.SetActive(false);
     }
-        
-    public void SaveDeck()
+    
+    // Saving
+    public async void SaveDeck()
     {
-        
+        List<Deck> decks = await playerDataModel.GetDecks();
+        List<string> deckNames = playerDataModel.GetDeckNames();
+
+        if (deckNames.Contains(this.currentDeck.Name))
+        {
+            int index = deckNames.IndexOf(this.currentDeck.Name);
+            decks.RemoveAt(index);
+        }
+
+        decks.Add(this.currentDeck);
     }
 }

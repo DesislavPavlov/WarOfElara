@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class GetCards : MonoBehaviour
 {
+    public static GetCards instance;
+
+    private void Start()
+    {
+        instance = this;
+    }
+
     public List<string>[] GetAllBasicCards()
     {
         DatabaseConnection.instance.OpenConnection();

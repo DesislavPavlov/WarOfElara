@@ -5,6 +5,7 @@ using System;
 using System.Data;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class MySQLCS : MonoBehaviour
 {
@@ -64,18 +65,6 @@ public class MySQLCS : MonoBehaviour
                 con.Close();
             con.Dispose();
         }
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
 
@@ -333,7 +322,7 @@ public class MySQLCS : MonoBehaviour
             itm = new data();
             itm.ID = body.name + "_" + body.GetInstanceID();
             itm.Name = body.name;
-            itm.levelname = Application.loadedLevelName;
+            itm.levelname = SceneManager.GetActiveScene().name;
             itm.objectType = body.name.Replace("(Clone)", "");
             itm.posx = body.transform.position.x;
             itm.posy = body.transform.position.y;

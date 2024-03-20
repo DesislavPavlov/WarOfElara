@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,16 +23,14 @@ public class DisplayDecks : MonoBehaviour
     }
 
     private void DisplayDeckButtons()
-    { 
-        int count = 0;
+    {
         foreach (var deck in this.decks)
         {
             GameObject button = Instantiate(deckButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            button.GetComponentInChildren<TextMeshProUGUI>().text = deck.Name;
             button.transform.SetParent(this.transform, false);
             Button buttonComponent = button.GetComponent<Button>();
             buttonComponent.onClick.AddListener(() => deckBuilder.OpenDeckBuilder(deck));
-
-            print("deck number " + ++count);
         }
 
         if (this.decks.Count < 5)
@@ -40,8 +39,6 @@ public class DisplayDecks : MonoBehaviour
             button.transform.SetParent(this.transform, false);
             Button buttonComponent = button.GetComponent<Button>();
             buttonComponent.onClick.AddListener(() => deckBuilder.OpenNewDeckBuilder());
-
-            print("new deck button created");
         }
     }
 

@@ -14,7 +14,7 @@ public class SetCardInListProperties : MonoBehaviour
     {
         print(card.Name);
 
-        image.sprite = card.Image;
+        image.sprite = Base64ToImage.ConvertBase64ToSprite(card.Base64Image);
         nameText.text = card.Name;
     }
 }
