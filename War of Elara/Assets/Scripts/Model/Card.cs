@@ -8,7 +8,7 @@ public class Card
     private int id;
     private string name;
     private string description;
-    private string base64image;
+    private int imageId;
 
     public int Id
     {
@@ -28,17 +28,18 @@ public class Card
         set { this.description = value; }
     }
 
-    public string Base64Image
+    public int ImageId
     {
-        get { return this.base64image; }
-        set { this.base64image = value; }
+        get { return this.imageId; }
+        set { this.imageId = value; }
     }
 
-    public Card(int id, string name, string description, string base64image)
+    public Card(int id, string name, string description, int imageId)
     {
         this.Id = id;
         this.Name = name;
         this.Description = description;
-        this.Base64Image = base64image;
+        this.ImageId = imageId;
     }
+
 }

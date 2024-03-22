@@ -21,6 +21,7 @@ public class DeckBuilder : MonoBehaviour
     [SerializeField] AudioClip removeCardSound;
     [SerializeField] GameObject nameForm;
     [SerializeField] TextMeshProUGUI nameText;
+    [SerializeField] DeckBuilderMessageBox messageBox;
 
 
 
@@ -66,13 +67,12 @@ public class DeckBuilder : MonoBehaviour
         // Create Card objects
         for (int row = 0; row < data[0].Count; row++)
         {
-
             int id = int.Parse(data[0][row]);
             string name = data[1][row];
             string description = data[2][row];
-            string base64image = data[3][row];
+            int imageId = int.Parse(data[3][row]);
 
-            Card newCard = new Card(id, name, description, base64image);
+            Card newCard = new Card(id, name, description, imageId);
             this.basicCards.Add(newCard);
         }
 
@@ -109,7 +109,7 @@ public class DeckBuilder : MonoBehaviour
     {
         GameObject cardInDeck = Instantiate(cardInDeckPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         cardInDeck.transform.SetParent(deckContainer.transform, false);
-        cardInDeck.GetComponent<Image>().sprite = Base64ToImage.ConvertBase64ToSprite(card.Base64Image);
+        cardInDeck.GetComponent<Image>().sprite = CardSprites.instance.GetSprite(card.ImageId);
         cardInDeck.GetComponent<Button>().onClick.AddListener(() => { RemoveCard(card, cardInDeck); });
     }
     private void DestroyPreviousCards()
@@ -129,7 +129,8 @@ public class DeckBuilder : MonoBehaviour
         }
     }
 
-    // Renaming Deck
+    // Deck Operations
+        // Rename
     public void OpenRenameDeckForm()
     {
         nameForm.SetActive(true);
@@ -145,10 +146,16 @@ public class DeckBuilder : MonoBehaviour
         this.nameText.text = newName;
         this.nameForm.SetActive(false);
     }
-    
-    // Saving
+
+        // Save
     public async void SaveDeck()
     {
+        if (this.currentDeck.Cards.Count != 30)
+        {
+            messageBox.DisplayMessage("One deck must contain exactly 30 cards.");
+            return;
+        }
+
         List<Deck> decks = await playerDataModel.GetDecks();
         List<string> deckNames = playerDataModel.GetDeckNames();
 
@@ -159,5 +166,17 @@ public class DeckBuilder : MonoBehaviour
         }
 
         decks.Add(this.currentDeck);
+    }
+
+        // Delete
+    public void DeleteDeck()
+    {
+        messageBox.AskForConfirmation("Are you certain you want to delete this deck?", Delete);
+
+        async void Delete()
+        {
+            List<Deck> decks = await playerDataModel.GetDecks();
+            decks.Remove(this.currentDeck);
+        }
     }
 }

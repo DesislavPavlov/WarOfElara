@@ -12,9 +12,9 @@ public class SetCardInListProperties : MonoBehaviour
 
     public void Initialize()
     {
-        print(card.Name);
+        print(this.card.Name);
 
-        image.sprite = Base64ToImage.ConvertBase64ToSprite(card.Base64Image);
+        image.sprite = CardSprites.instance.GetSprite(this.card.ImageId);
         nameText.text = card.Name;
     }
 }

@@ -90,6 +90,7 @@ public class PlayerDataModel : MonoBehaviour
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         });
+        print(dataStringified);
 
         var playerDecks = new Dictionary<string, object>{
           {"decks", dataStringified}

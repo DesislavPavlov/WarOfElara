@@ -71,13 +71,13 @@ public class DatabaseConnection : MonoBehaviour
         }
     }
 
-    public List<string>[] Select(string query)
+    public List<string>[] Select(string query, int cols, params string[] colNames)
     {
-        List<string>[] list = new List<string>[4];
-        list[0] = new List<string>();
-        list[1] = new List<string>();
-        list[2] = new List<string>();
-        list[3] = new List<string>();
+        List<string>[] list = new List<string>[cols];
+        for (int i = 0; i < list.Length; i++)
+        {
+            list[i] = new List<string>();
+        }
 
         try
         {
@@ -86,10 +86,10 @@ public class DatabaseConnection : MonoBehaviour
 
             while (dataReader.Read())
             {
-                list[0].Add(dataReader["id"] + "");
-                list[1].Add(dataReader["name"] + "");
-                list[2].Add(dataReader["description"] + "");
-                list[3].Add(dataReader["image"] + "");
+                for (int i = 0; i < list.Length; i++)
+                {
+                    list[i].Add(dataReader[colNames[i]] + "");
+                }
             }
 
             dataReader.Close();
